@@ -33,3 +33,5 @@ go.work.sum
 
 # storage file
 /storage
+# config ignore only in root level
+/config

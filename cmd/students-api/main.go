@@ -11,6 +11,8 @@ import (
 	"time"
 
 	"github.com/thissidemayur/1-golang-studentsApi/internal/config"
+	"github.com/thissidemayur/1-golang-studentsApi/internal/http/handlers/student"
+	"github.com/thissidemayur/1-golang-studentsApi/internal/storage/sqlite"
 )
 
 func main(){
@@ -18,14 +20,19 @@ func main(){
 	cfg:= config.MustLoad()
 
 	// 2 set custom/built in logger (if applicable)
+	
 	// 3. Database connection
+	storage,err:=sqlite.New(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+	slog.Info("storage initalized",slog.String("env",cfg.Env), slog.String("version","1.0.0"))
+	
 
 	// 4. Setup router
 	router := http.NewServeMux()
 
-	router.HandleFunc("GET /",func(w http.ResponseWriter, r *http.Request){
-		w.Write([]byte("Welcome to student API"))
-	})
+	router.HandleFunc("POST /api/v1/students",student.New(storage))
 	// 5. setup server
 	server :=http.Server{
 		Addr: cfg.Addr,

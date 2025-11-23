@@ -6,3 +6,9 @@ type Student struct {
 	Email string `validate:"required,email"`
 	RollNo int `validate:"required"`
 }
+
+type UpdateStudent struct {
+	Name *string `json:"name"`
+	Email *string `json:"email" validate:"email"` 
+	RollNo *int `json:"roll_no"`
+}

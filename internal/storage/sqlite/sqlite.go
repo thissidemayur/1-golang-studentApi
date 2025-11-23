@@ -2,8 +2,10 @@ package sqlite
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/thissidemayur/1-golang-studentsApi/internal/config"
@@ -140,4 +142,53 @@ func (s *Sqlite) DeleteStudentById(id int64) error {
 	}
 
 	return nil
+}
+
+// UpdateStudentById method
+func (s *Sqlite) UpdateStudentById(id int64, dto types.UpdateStudent) (types.Student,error){
+	query := "UPDATE student SET "
+	args := []interface{}{}
+	updates := []string{}
+
+	if dto.Name != nil {
+		updates = append(updates,"name = ? ")
+		args = append(args,*dto.Name)
+
+	}
+	if dto.Email != nil {
+		updates = append(updates,"email = ? ")
+		args = append(args,*dto.Email)
+	}
+	if dto.RollNo != nil {
+		updates = append(updates,"rollNo = ? ")
+		args = append(args,*dto.RollNo)
+	}
+
+	if len(updates) == 0 {
+		return types.Student{} , errors.New("no fields to update")
+	}
+
+	// join updates
+	query+=strings.Join(updates, ", ") + " WHERE id = ?"
+	args = append(args, id)
+
+	// prepare statement
+	data,err:=s.Db.Exec(query,args...)
+	if err != nil {
+		return types.Student{}, err
+	}
+	afftectedId,err :=data.RowsAffected()
+	if err != nil {
+		return types.Student{}, err
+	}
+	if afftectedId == 0 {
+		return types.Student{}, fmt.Errorf("student with id %d not found",id)
+	}
+
+
+	student, err := s.GetStudentById(id) 
+	if err != nil {
+		return types.Student{}, err
+	}
+	return student, nil
 }

@@ -7,5 +7,6 @@ type Storage interface {
 	// define storage methods here
 	CreateStudent(name string, email string, rollNo int) (int64,error)
 	GetStudentById(id int64) (types.Student,error)
+	GetStudentList() ([]types.Student,error)
 }
 

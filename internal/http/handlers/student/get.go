@@ -31,3 +31,17 @@ func GetStudentById(storage storage.Storage) http.HandlerFunc {
 	}
 }
 
+// get student list
+func GetStudentList(storage storage.Storage) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var students []types.Student
+
+		students, err := storage.GetStudentList()
+		if err != nil {
+			response.WriteJsonResponse(w,http.StatusInternalServerError,response.GeneralError(err))
+			return
+		}
+
+		response.WriteJsonResponse(w,http.StatusOK,students)
+	}
+}

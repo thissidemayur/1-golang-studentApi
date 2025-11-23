@@ -35,3 +35,4 @@ go.work.sum
 /storage
 # config ignore only in root level
 /config
+doubt.md

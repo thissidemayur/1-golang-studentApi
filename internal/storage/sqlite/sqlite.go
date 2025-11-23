@@ -68,6 +68,7 @@ func (s *Sqlite)    CreateStudent(name string, email string, rollNo int) (int64,
 
 }
 
+// GetStudentById method
 func (s *Sqlite) GetStudentById(id int64) (types.Student,error) {
 
 	// prepare query
@@ -91,7 +92,7 @@ func (s *Sqlite) GetStudentById(id int64) (types.Student,error) {
 	return student,nil
 }
 
-
+// GetStudentList method
 func (s *Sqlite) GetStudentList() ([]types.Student,error) {
 
 	// prepare query
@@ -120,4 +121,23 @@ func (s *Sqlite) GetStudentList() ([]types.Student,error) {
 	}
 
 	return students, nil
+}
+
+// DeleteStudentById method
+func (s *Sqlite) DeleteStudentById(id int64) error {
+
+	// prepare statement
+	stmt, err := s.Db.Prepare("DELETE FROM student WHERE id=?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// execute statement
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
